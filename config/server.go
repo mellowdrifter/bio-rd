@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"strings"
@@ -125,11 +126,10 @@ func _getLoopbackIP(iface *net.Interface) (net.IP, error) {
 	return max, nil
 }
 
+// addrIsGreater returns true if the first address is higher than the second.
+// Returns false if not.
 func addrIsGreater(a net.IP, b net.IP) bool {
-	/*
-	 * FIXME: Implement proper comparison
-	 */
-	if a.String() > b.String() {
+	if bytes.Compare(a, b) == 1 {
 		return true
 	}
 	return false

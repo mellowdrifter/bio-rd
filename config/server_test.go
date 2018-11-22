@@ -4,6 +4,8 @@ import (
 	"net"
 	"reflect"
 	"testing"
+
+	bnet "github.com/bio-routing/bio-rd/net"
 )
 
 func TestGetLoopbackIP(t *testing.T) {
@@ -16,7 +18,7 @@ func TestGetLoopbackIP(t *testing.T) {
 		want    net.IP
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -42,7 +44,7 @@ func TestGetHighestIP(t *testing.T) {
 		want    net.IP
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,7 +70,54 @@ func TestAddrIsGreater(t *testing.T) {
 		args args
 		want bool
 	}{
-	// TODO: Add test cases.
+		{
+			name: "192.168.0.0 lower than 192.168.0.1",
+			args: args{
+				a: net.IPv4(192, 168, 0, 0),
+				b: net.IPv4(192, 168, 0, 1),
+			},
+			want: false,
+		},
+		{
+			name: "192.168.0.1 higher than 192.168.0.0",
+			args: args{
+				a: net.IPv4(192, 168, 0, 1),
+				b: net.IPv4(192, 168, 0, 0),
+			},
+			want: true,
+		},
+		{
+			name: "10.0.0.0 lower than 172.12.0.0",
+			args: args{
+				a: net.IPv4(10, 0, 0, 0),
+				b: net.IPv4(172, 12, 0, 0),
+			},
+			want: false,
+		},
+		{
+			name: "172.12.0.0 higher than 10.0.0.0",
+			args: args{
+				a: net.IPv4(172, 12, 0, 0),
+				b: net.IPv4(10, 0, 0, 0),
+			},
+			want: true,
+		},
+		{
+			name: "::7d2:0:0:0:1c8 higher than ::7d1:0:0:0:1c8",
+			args: args{
+				a: bnet.IPv6(2002, 456).Bytes(),
+				b: bnet.IPv6(2001, 456).Bytes(),
+			},
+			want: true,
+		},
+		{
+			name: "::7d1:0:0:0:1c8 higher than ::7d2:0:0:0:1c8",
+			args: args{
+				a: bnet.IPv6(2001, 456).Bytes(),
+				b: bnet.IPv6(2002, 456).Bytes(),
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
